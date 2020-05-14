@@ -1,0 +1,11 @@
+raw_data_path: /nas/ivtmatsim/scenarios/sao_paulo/data
+target_path: temp
+output_path: output
+output_id: gitlab
+disable_progress_bar: true
+threads: 24
+input_downsampling: 0.01
+java_memory: 100G
+hdm_threads: 24
+stages:
+    - matsim.final
