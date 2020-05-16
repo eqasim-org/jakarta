@@ -1,7 +1,7 @@
 raw_data_path: /nas/ilahia/dataset
 target_path: /nas/ilahia/dataset/cache
 output_path: /nas/ilahia/dataset/output
-input_downsampling: 0.2
+input_downsampling: 0.1
 java_memory: 10G
 threads: 4
 hdm_threads: 4
@@ -15,11 +15,11 @@ stages:
     #- population.activities
     #- data.spatial.zones
     #- data.od.cleaned
-    - population.spatial.by_person.primary_zones
+    #- population.spatial.by_person.primary_zones
     #- population.spatial.by_person.primary_locations
     #- population.opportunities
     #- population.spatial.by_person.output
-    #- population.spatial.locations
+    - population.spatial.locations
     #- matsim.facilities
     #- matsim.population
     #- matsim.secondary_locations
