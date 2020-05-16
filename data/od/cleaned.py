@@ -17,26 +17,42 @@ def fix_zones(df, df_mapping, source_column, target_column):
 
 def execute(context):
     df_mapping = pd.read_csv("%s/spatial/codes.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
-    df_mapping.columns = ["observation", "__long_zone_id", "__short_zone_id"]
-    df_mapping = df_mapping[["__long_zone_id", "__short_zone_id"]]
+
+    #print(df_mapping.columns)
+    #exit()
+
+    df_mapping.columns = ["observation", "zone_id", "__short_zone_id"]
+    df_mapping = df_mapping[["zone_id", "__short_zone_id"]]
+
+
 
     df_work = pd.read_csv("%s/ODs/OD_work_update.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
-    df_work.columns = ["long_origin_id", "long_destination_id", "weight"]
+    df_work.columns = ["origin_id", "destination_id", "weight"]
+
+
+   
+
+
+
 
     df_education = pd.read_csv("%s/ODs/OD_education_update.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
-    df_education.columns = ["long_origin_id", "long_destination_id", "weight"]
+    df_education.columns = ["origin_id", "destination_id", "weight"]
 
-    df_work = fix_zones(df_work, df_mapping, "long_origin_id", "origin_id")
-    df_work = fix_zones(df_work, df_mapping, "long_destination_id", "destination_id")
-    df_education = fix_zones(df_education, df_mapping, "long_origin_id", "origin_id")
-    df_education = fix_zones(df_education, df_mapping, "long_destination_id", "destination_id")
+    #df_work = fix_zones(df_work, df_mapping, "long_origin_id", "origin_id")
 
-    del df_work["long_origin_id"]
-    del df_work["long_destination_id"]
-    del df_education["long_origin_id"]
-    del df_education["long_destination_id"]
 
-    zone_ids = set(np.unique(df_mapping["__short_zone_id"]))
+    
+
+    #df_work = fix_zones(df_work, df_mapping, "long_destination_id", "destination_id")
+    #df_education = fix_zones(df_education, df_mapping, "long_origin_id", "origin_id")
+    #df_education = fix_zones(df_education, df_mapping, "long_destination_id", "destination_id")
+
+    #del df_work["long_origin_id"]
+    #del df_work["long_destination_id"]
+    #del df_education["long_origin_id"]
+    #del df_education["long_destination_id"]
+
+    zone_ids = set(np.unique(df_mapping["zone_id"]))
     #zone_ids |= set(np.unique(df_work["origin_id"]))
     #zone_ids |= set(np.unique(df_work["destination_id"]))
     #zone_ids |= set(np.unique(df_education["origin_id"]))
@@ -60,8 +76,8 @@ def execute(context):
     df_work["weight"] /= df_work["total"]
     df_education["weight"] /= df_education["total"]
 
-    #assert(sum(df_work_totals["total"] == 0.0) == 0)
-    #assert(sum(df_education_totals["total"] == 0.0) == 0)
+    assert(sum(df_work_totals["total"] == 0.0) == 0)
+    assert(sum(df_education_totals["total"] == 0.0) == 0)
 
     # Cleanup
     df_work = df_work[["origin_id", "destination_id", "weight"]]
@@ -120,5 +136,8 @@ def execute(context):
     df_education = pd.merge(df_education, df_total, on = "origin_id")
     df_education["weight"] /= df_education["total"]
     del df_education["total"]
+
+    #print(df_education.columns)
+    #exit()
 
     return df_work, df_education
