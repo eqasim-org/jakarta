@@ -18,6 +18,10 @@ SAMPLE_SIZE = 1000
 def initialize_parallel(_df_persons, _df_locations):
     global df_persons, df_locations
     df_persons = pd.DataFrame(_df_persons, copy = True)
+
+    #print(df_persons.count)
+    #exit()
+
     df_locations = pd.DataFrame(_df_locations, copy = True) if _df_locations is not None else None
 
 def define_ordering(df_persons, commute_coordinates):
@@ -116,8 +120,13 @@ def execute(context):
 
     print("Imputing home locations ...")
     df_households = context.stage("population.spatial.by_person.primary_zones")[0]
+    
     df_home_opportunities = df_opportunities[df_opportunities["offers_home"]]
+    
     df_home = impute_locations(df_households, df_zones, df_home_opportunities, threads, "person_id")[["person_id", "x", "y", "location_id"]]
+    
+    print(df_home.count)
+    exit()
 
     #print("Imputing pt zone id ...")
     #df_pt_zones = context.stage("data.spatial.pt_zone")
