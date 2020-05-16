@@ -24,12 +24,20 @@ def execute(context):
     df_persons = pd.DataFrame(context.stage("population.sociodemographics")[["person_id", "zone_id", "hts_person_id", "has_work_trip", "has_education_trip"]], copy = True)
     df_persons = df_persons
 
+       
 
     df_trips = context.stage("population.trips")[["person_id", "following_purpose"]]
     df_work_od, df_education_od = context.stage("data.od.cleaned")
 
+    #print(df_work_od.count)
+    #exit()
+
+ 
+    
     df_home = df_persons[["person_id", "zone_id"]]
     #df_home.columns = ["hts_person_id", "zone_id"]
+
+   
 
     # First, home zones
     #print("Attaching home zones ...")
@@ -42,6 +50,8 @@ def execute(context):
 
     # Second, work zones
     df_work = []
+
+    
 
     for origin_id in tqdm(np.unique(df_persons["zone_id"]), desc = "Sampling work zones"):
         f = (df_persons["zone_id"] == origin_id) & df_persons["has_work_trip"]
