@@ -10,13 +10,14 @@ def configure(context, require):
     require.stage("data.spatial.zones")
 
 def execute(context):
-    df = pd.read_csv("%s/facilities_osm.csv" % context.config["raw_data_path"])
+    df = pd.read_csv("%s/facilities_new.csv" % context.config["raw_data_path"])
     df.columns = ["x", "y", "purpose"]
-    df = df[df["purpose"] == "shop"]
+    #df = df[df["purpose"] == "shop"]    
     del df["purpose"]
 
     df_opportunities = df
 
+        
     #df_opportunities = pd.DataFrame(context.stage("data.bpe.cleaned")[[
     #    "bpe_id", "x", "y", "activity_type", "commune_id"
     #]], copy = True)
@@ -38,8 +39,11 @@ def execute(context):
     #df_opportunities = pd.merge(df_opportunities, df_zones, on = "commune_id")
 
     df_zones = context.stage("data.spatial.zones")
+    #print(df_zones.count)
+    #exit()
 
     df_opportunities = data.spatial.utils.to_gpd(df_opportunities, crs = {"init" : "EPSG:5330"})
     df_opportunities = data.spatial.utils.impute(df_opportunities, df_zones, "location_id", "zone_id", fix_by_distance = False).dropna()
 
+    
     return df_opportunities
