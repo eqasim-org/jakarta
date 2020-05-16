@@ -6,7 +6,7 @@ import pandas as pd
 from sklearn.neighbors import KDTree
 import multiprocessing as mp
 
-def to_gpd(df, x = "x", y = "y", crs = {"init" : "EPSG:29183"}):
+def to_gpd(df, x = "x", y = "y", crs = {"init" : "EPSG:5330"}):
     df["geometry"] = [
         geo.Point(*coord) for coord in tqdm(
             zip(df[x], df[y]), total = len(df),
@@ -15,8 +15,8 @@ def to_gpd(df, x = "x", y = "y", crs = {"init" : "EPSG:29183"}):
     df = gpd.GeoDataFrame(df)
     df.crs = crs
 
-    if not crs == {"init" : "EPSG:29183"}:
-        df = df.to_crs({"init" : "EPSG:29183"})
+    if not crs == {"init" : "EPSG:5330"}:
+        df = df.to_crs({"init" : "EPSG:5330"})
 
     return df
 
