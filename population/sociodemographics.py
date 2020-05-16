@@ -28,6 +28,8 @@ def execute(context):
 
     ]]
 
+
+
     #df_hts = df_hts[[
         #"hts_person_id", #"has_license", "has_pt_subscription",
         #"number_of_bikes",
@@ -41,6 +43,11 @@ def execute(context):
         "commute_mode", "commute_distance",
         "has_work_trip", "has_education_trip"
     ]]
+
+
+
+    #print(df_matching.count)
+    #exit()
 
 
     #df_income = df_income[[
@@ -78,5 +85,11 @@ def execute(context):
     #df_persons.loc[df_persons["number_of_bikes"] < df_persons["household_size"], "bike_availability"] = "some"
     #df_persons.loc[df_persons["number_of_bikes"] == 0, "bike_availability"] = "none"
     #df_persons["bike_availability"] = df_persons["bike_availability"].astype("category")
+
+    #print(df_persons.count)
+    #exit()
+
+
     
+
     return df_persons
