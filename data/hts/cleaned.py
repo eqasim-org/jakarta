@@ -8,6 +8,15 @@ def configure(context, require):
 def execute(context):
     df_persons = pd.read_csv("%s/HTS/header_persons_final_used2.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
    
+    df_codes = pd.read_csv("%s/spatial/codes.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
+
+### delete individu which are not living in the zone
+
+    df_persons['exist1'] = df_persons['home_zone'].isin(df_codes['id_zone'])
+    df_persons = df_persons[df_persons['exist1']==True]
+
+    #print(df_persons.count)
+    #exit()
 
 #I don't need this
     #for column in ["weight_trip", "number_of_bikes", "number_of_motorcycles", "weekday"]:
@@ -72,6 +81,15 @@ def execute(context):
 
     df_trips = pd.read_csv("%s/HTS/header_trips_Jakarta_3.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
 
+    ### delete individu which are not living in the zone
+
+    df_trips['exist1'] = df_trips['person_id'].isin(df_persons['person_id'])
+    df_trips = df_trips[df_trips['exist1']==True]
+
+    
+
+
+
     df_trips.loc[df_trips["destination_purpose"] == 1, "destination_purpose"] = "home"
     df_trips.loc[df_trips["destination_purpose"] == 2, "destination_purpose"] = "other"
     df_trips.loc[df_trips["destination_purpose"] == 3, "destination_purpose"] = "work"
@@ -96,6 +114,7 @@ def execute(context):
     df_trips.loc[df_trips["mode"] == 10, "mode"] = "mc"
     df_trips.loc[df_trips["mode"] == 11, "mode"] = "car"
     df_trips.loc[df_trips["mode"] == 12, "mode"] = "mc"
+    df_trips.loc[df_trips["mode"] == 13, "mode"] = "car"
 
     df_trips["mode"] = df_trips["mode"].astype("category")
 
