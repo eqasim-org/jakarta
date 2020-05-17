@@ -8,6 +8,7 @@ hdm_threads: 4
 stages:
     #- data.census.cleaned
     #- data.hts.cleaned
+    #- data.Opportunities.extract_roads_osm
     #- population.matching
     #- population.upscaled
     #- population.sociodemographics
@@ -16,9 +17,9 @@ stages:
     #- data.spatial.zones
     #- data.od.cleaned
     #- population.spatial.by_person.primary_zones
-    #- population.spatial.by_person.primary_locations
-    #- population.opportunities
-    #- population.spatial.by_person.output
+    - population.spatial.by_person.primary_locations
+    - population.opportunities
+    - population.spatial.by_person.output
     - population.spatial.locations
     #- matsim.facilities
     #- matsim.population
