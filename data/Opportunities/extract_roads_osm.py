@@ -45,5 +45,10 @@ def execute(context):
     df_osm = df_osm[df_osm['type']=='way']
     df_osm = df_osm[df_osm['tagkey']=='highway']
     df_osm = df_osm[df_osm['tagvalue']=='residential']
+
+    
+
+    #print(df_osm.count)
+    #exit()
     return df_osm
     
