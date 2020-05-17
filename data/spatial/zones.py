@@ -30,7 +30,7 @@ def execute(context):
 
     df_zones = df_zones.to_crs({"init" : "EPSG:5330"})
 
-    print(df_zones.count)
-    exit()
+    #print(df_zones.count)
+    #exit()
 
     return df_zones
