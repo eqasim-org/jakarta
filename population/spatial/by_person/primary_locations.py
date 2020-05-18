@@ -19,8 +19,7 @@ def initialize_parallel(_df_persons, _df_locations):
     global df_persons, df_locations
     df_persons = pd.DataFrame(_df_persons, copy = True)
 
-    #print(df_persons.count)
-    #exit()
+    
 
     df_locations = pd.DataFrame(_df_locations, copy = True) if _df_locations is not None else None
 
@@ -118,15 +117,18 @@ def execute(context):
     df_opportunities = context.stage("population.opportunities")
     df_commute = context.stage("population.sociodemographics")[["person_id", "commute_distance"]]
 
+   
     print("Imputing home locations ...")
     df_households = context.stage("population.spatial.by_person.primary_zones")[0]
     
     df_home_opportunities = df_opportunities[df_opportunities["offers_home"]]
     
     df_home = impute_locations(df_households, df_zones, df_home_opportunities, threads, "person_id")[["person_id", "x", "y", "location_id"]]
+
+   
     
-    print(df_home.count)
-    exit()
+    #print(df_home.count)
+    #exit()
 
     #print("Imputing pt zone id ...")
     #df_pt_zones = context.stage("data.spatial.pt_zone")
@@ -150,5 +152,6 @@ def execute(context):
     df_persons = pd.merge(df_persons, df_home.rename({"x" : "home_x", "y" : "home_y"}, axis = 1))
     df_education_opportunities = df_opportunities[df_opportunities["offers_education"]]
     df_education = impute_locations(df_persons, df_commune_zones, df_education_opportunities, threads)[["person_id", "x", "y", "location_id"]]
-
+    
+    
     return df_home, df_work, df_education
