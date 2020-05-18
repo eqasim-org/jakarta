@@ -62,11 +62,16 @@ def execute(context):
 
     df_zones = context.stage("data.spatial.zones")
     zone_ids = set(np.unique(df_zones["zone_id"]))
-	existing_zone_ids = set(np.unique(df_opportunities["zone_id"]))
+    df_opportunities["location_id"] = np.arange(len(df_opportunities))
+
+    df_opportunities = data.spatial.utils.to_gpd(df_opportunities, crs = {"init" : "EPSG:4326"})
+    df_opportunities = data.spatial.utils.impute(df_opportunities, df_zones, "location_id", "zone_id", fix_by_distance = False).dropna()
+
+    existing_zone_ids = set(np.unique(df_opportunities["zone_id"]))
     missing_zone_ids = zone_ids - existing_zone_ids    
         
-    #assign work to centroids only for the missing zone ids
-    df_centroids = df_zones[df_zones["zone_id"].isin(missing_work_ids)].copy()
+    #assign locations to centroids only for the missing zone ids
+    df_centroids = df_zones[df_zones["zone_id"].isin(missing_zone_ids)].copy()
     df_centroids["x"] = df_centroids["geometry"].centroid.x
     df_centroids["y"] = df_centroids["geometry"].centroid.y
     df_centroids["offers_work"] = True
@@ -76,12 +81,15 @@ def execute(context):
     df_centroids["offers_shop"] = True
     df_centroids["offers_home"] = True 
 
+    
+
     df_opportunities = pd.concat([df_opportunities, df_centroids], sort = True)
     df_opportunities["location_id"] = np.arange(len(df_opportunities))
 
-    df_opportunities = data.spatial.utils.to_gpd(df_opportunities, crs = {"init" : "EPSG:4326"})
-
-    df_opportunities = data.spatial.utils.impute(df_opportunities, df_zones, "location_id", "zone_id", fix_by_distance = False).dropna()
 
     
+
+    print(df_opportunities.columns)
+    exit()
+     
     return df_opportunities
