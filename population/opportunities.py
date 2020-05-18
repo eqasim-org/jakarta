@@ -66,7 +66,8 @@ def execute(context):
 
     df_opportunities = data.spatial.utils.to_gpd(df_opportunities, crs = {"init" : "EPSG:4326"})
     df_opportunities = data.spatial.utils.impute(df_opportunities, df_zones, "location_id", "zone_id", fix_by_distance = False).dropna()
-
+    df_opportunities["x"] = df_opportunities["geometry"].x
+    df_opportunities["y"] = df_opportunities["geometry"].y
     existing_zone_ids = set(np.unique(df_opportunities["zone_id"]))
     missing_zone_ids = zone_ids - existing_zone_ids    
         
@@ -81,15 +82,8 @@ def execute(context):
     df_centroids["offers_shop"] = True
     df_centroids["offers_home"] = True 
 
-    
-
     df_opportunities = pd.concat([df_opportunities, df_centroids], sort = True)
     df_opportunities["location_id"] = np.arange(len(df_opportunities))
 
-
-    
-
-    print(df_opportunities.columns)
-    exit()
      
     return df_opportunities
