@@ -14,19 +14,19 @@ def configure(context, require):
 
 
 def execute(context):
-    df_combined = pd.read_csv("%s/facilities_combined_25032020.csv" % context.config["raw_data_path"])
-    df_combined = df_combined[["long", "lat", "tag"]]
-    df_combined.columns = ["x", "y", "purpose"]
+    #df_combined = pd.read_csv("%s/facilities_combined_25032020.csv" % context.config["raw_data_path"])
+    #df_combined = df_combined[["long", "lat", "tag"]]
+    #df_combined.columns = ["x", "y", "purpose"]
     #df = df[df["purpose"] == "shop"]    
-    del df_combined["purpose"]
-    df_opportunities = df_combined
+    #del df_combined["purpose"]
+    #df_opportunities = df_combined
 
-    df_osm = pd.read_csv("%s/facilities_osm.csv" % context.config["raw_data_path"])
-    df_osm = df_osm[["long", "lat", "tag"]]
-    df_osm.columns = ["x", "y", "purpose"]
+    #df_osm = pd.read_csv("%s/facilities_osm.csv" % context.config["raw_data_path"])
+    #df_osm = df_osm[["long", "lat", "tag"]]
+    #df_osm.columns = ["x", "y", "purpose"]
     #df = df[df["purpose"] == "shop"]    
-    del df_osm["purpose"]
-    df_osm = df_osm
+    #del df_osm["purpose"]
+    #df_osm = df_osm
 
 
     
@@ -35,7 +35,7 @@ def execute(context):
     "x", "y"]]
     
     #df_osm = data.spatial.utils.to_gpd(df_osm, crs = {"init" : "epsg:4326"})
-    df_opportunities = pd.concat([df_opportunities, df_residential_road, df_osm])
+    df_opportunities = df_residential_road.copy()
     
     #from pyproj import Transformer
 
@@ -55,27 +55,31 @@ def execute(context):
 
     df_opportunities["offers_work"] = True
     df_opportunities["offers_other"] = True
-
-    df_opportunities["offers_leisure"] = True #df_opportunities["activity_type"] == "leisure"
-    df_opportunities["offers_shop"] = True #df_opportunities["activity_type"] == "shop"
-    df_opportunities["offers_education"] = True #df_opportunities["activity_type"] == "education"
-
+    df_opportunities["offers_leisure"] = True
+    df_opportunities["offers_shop"] = True
+    df_opportunities["offers_education"] = True
     df_opportunities["offers_home"] = True
 
+    df_zones = context.stage("data.spatial.zones")
+    zone_ids = set(np.unique(df_zones["zone_id"]))
+	existing_zone_ids = set(np.unique(df_opportunities["zone_id"]))
+    missing_zone_ids = zone_ids - existing_zone_ids    
+        
+    #assign work to centroids only for the missing zone ids
+    df_centroids = df_zones[df_zones["zone_id"].isin(missing_work_ids)].copy()
+    df_centroids["x"] = df_centroids["geometry"].centroid.x
+    df_centroids["y"] = df_centroids["geometry"].centroid.y
+    df_centroids["offers_work"] = True
+    df_centroids["offers_education"] = True
+    df_centroids["offers_other"] = True
+    df_centroids["offers_leisure"] = True
+    df_centroids["offers_shop"] = True
+    df_centroids["offers_home"] = True 
+
+    df_opportunities = pd.concat([df_opportunities, df_centroids], sort = True)
     df_opportunities["location_id"] = np.arange(len(df_opportunities))
 
-    #df_zones = context.stage("data.spatial.zones")[["zone_id", "commune_id", "zone_level"]]
-    #df_zones = df_zones[df_zones["zone_level"] == "commune"][["zone_id", "commune_id"]]
-    #df_opportunities = pd.merge(df_opportunities, df_zones, on = "commune_id")
-
-    df_zones = context.stage("data.spatial.zones")
-    #print(df_zones.count)
-    #exit()
-
     df_opportunities = data.spatial.utils.to_gpd(df_opportunities, crs = {"init" : "EPSG:4326"})
-    
-    #print(df_opportunities.count)
-    #exit()
 
     df_opportunities = data.spatial.utils.impute(df_opportunities, df_zones, "location_id", "zone_id", fix_by_distance = False).dropna()
 
