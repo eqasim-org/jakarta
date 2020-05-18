@@ -37,7 +37,7 @@ def execute(context):
         lines.append(line)
 
     df["geometry"] = lines
-    df.crs = {"init" : "EPSG:29183"}
+    df.crs = {"init" : "EPSG:5330"}
 
-    df[["person_id", "home_x", "home_y", "work_x", "work_y"]].to_csv("%s/home_work.csv" % context.cache_path, index = None)
-    df.to_file("%s/commute.shp" % context.cache_path)
+    df[["person_id", "home_x", "home_y", "work_x", "work_y"]].to_csv("%s/home_work.csv" % context.config["output_path"], index = None)
+    df.to_file("%s/commute.shp" % context.config["output_path"])
