@@ -13,12 +13,12 @@ stages:
     #- population.upscaled
     #- population.sociodemographics
     #- population.trips
-    #- population.activities
+    - population.activities
     #- data.spatial.zones
     #- data.od.cleaned
     #- population.spatial.by_person.primary_zones
     #- population.spatial.by_person.primary_locations
-    - population.opportunities
+    #- population.opportunities
     #- population.spatial.by_person.output
     #- population.spatial.locations
     #- matsim.facilities
