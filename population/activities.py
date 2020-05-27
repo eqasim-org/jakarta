@@ -9,14 +9,27 @@ def configure(context, require):
 
 def execute(context):
     df_trips = pd.DataFrame(context.stage("population.trips"), copy = True)
+    
+
+
     df_trips.loc[:, "previous_trip_id"] = df_trips.loc[:, "trip_id"] - 1
+    
+    #print(df_trips.count)
+    #exit()
+
 
     df_activities = pd.merge(
         df_trips, df_trips, left_on = ["person_id", "previous_trip_id"], right_on = ["person_id", "trip_id"],
         suffixes = ["_following_trip", "_previous_trip"], how = "left"
     )
 
+    
+
     df_activities.loc[:, "start_time"] = df_activities.loc[:, "arrival_time_previous_trip"]
+     
+    print(df_activities.count)
+    exit()
+
     df_activities.loc[:, "end_time"] = df_activities.loc[:, "departure_time_following_trip"]
     df_activities.loc[:, "purpose"] = df_activities.loc[:, "following_purpose_previous_trip"]
     df_activities.loc[:, "activity_id"] = df_activities.loc[:, "trip_id_following_trip"]
@@ -48,7 +61,7 @@ def execute(context):
     ], columns = ["person_id", "activity_id", "purpose", "is_last"])
 
     # Impute household id in the missing ones
-    #df_missing = pd.merge(df_missing, df_persons[["person_id"]])
+    df_missing = pd.merge(df_missing, df_persons[["person_id"]])
 
     df_activities = pd.concat([df_activities, df_missing], sort = True)
     assert(len(np.unique(df_persons["person_id"])) == len(np.unique(df_activities["person_id"])))
@@ -60,5 +73,7 @@ def execute(context):
     df_activities = df_activities[[
         "person_id", "activity_id", "start_time", "end_time", "duration", "purpose", "is_last"
     ]]
-
+    
+    print(df_activities.count)
+    exit()
     return df_activities
