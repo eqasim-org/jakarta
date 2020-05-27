@@ -12,8 +12,8 @@ def execute(context):
 
 ### delete individu which are not living in the zone
 
-    df_persons['exist1'] = df_persons['home_zone'].isin(df_codes['id_zone'])
-    df_persons = df_persons[df_persons['exist1']==True]
+    #df_persons['exist1'] = df_persons['home_zone'].isin(df_codes['id_zone'])
+    #df_persons = df_persons[df_persons['exist1']==True]
 
     #print(df_persons.count)
     #exit()
@@ -83,8 +83,8 @@ def execute(context):
 
     ### delete individu which are not living in the zone
 
-    df_trips['exist1'] = df_trips['person_id'].isin(df_persons['person_id'])
-    df_trips = df_trips[df_trips['exist1']==True]
+    #df_trips['exist1'] = df_trips['person_id'].isin(df_persons['person_id'])
+    #df_trips = df_trips[df_trips['exist1']==True]
 
     
 
@@ -128,26 +128,48 @@ def execute(context):
 
     # Adjust trip id
     df_trips = df_trips.sort_values(by = ["person_id", "trip_id"])
-    trips_per_person = df_trips.groupby("person_id").size().reset_index(name = "count")["count"].values
-    df_trips["new_trip_id"] = np.hstack([np.arange(n) for n in trips_per_person])
+    #trips_per_person = df_trips.groupby("person_id").size().reset_index(name = "count")["count"].values
+    #df_trips["new_trip_id"] = np.hstack([np.arange(n) for n in trips_per_person])
+
+    
 
     # Impute activity duration
-    df_duration = pd.DataFrame(df_trips[[
-        "person_id", "trip_id", "arrival_time"
-    ]], copy = True)
+    #df_duration = pd.DataFrame(df_trips[[
+    #    "person_id", "trip_id", "arrival_time"
+    #]], copy = True)
 
-    df_following = pd.DataFrame(df_trips[[
-        "person_id", "trip_id", "departure_time"
-    ]], copy = True)
-    df_following.columns = ["person_id", "trip_id", "following_trip_departure_time"]
-    df_following["trip_id"] = df_following["trip_id"] - 1
+    #df_following = pd.DataFrame(df_trips[[
+    #    "person_id", "trip_id", "departure_time"
+    #]], copy = True)
+    #df_following.columns = ["person_id", "trip_id", "following_trip_departure_time"]
+    #df_following["trip_id"] = df_following["trip_id"] - 1
 
-    df_duration = pd.merge(df_duration, df_following, on = ["person_id", "trip_id"])
-    df_duration["activity_duration"] = df_duration["following_trip_departure_time"] - df_duration["arrival_time"]
-    df_duration.loc[df_duration["activity_duration"] < 0.0, "activity_duration"] += 24.0 * 3600.0
 
-    df_duration = df_duration[["person_id", "trip_id", "activity_duration"]]
-    df_trips = pd.merge(df_trips, df_duration, how = "left", on = ["person_id", "trip_id"])
+
+    df_trips['following_trip_departure_time'] = (
+    df_trips.groupby('person_id')['departure_time'].transform(lambda s: s[::-1]))
+
+
+    #print(df_trips.columns)
+    #exit()
+
+
+    #df_duration = pd.merge(df_duration, df_following, on = ["person_id", "trip_id"])
+
+    #print(df_duration.count)
+    #exit()
+    
+
+    
+    df_trips["activity_duration"] = df_trips["following_trip_departure_time"] - df_trips["arrival_time"]
+    df_trips.loc[df_trips["activity_duration"] < 0.0, "activity_duration"] += 24.0 * 3600.0
+
+    #df_duration = df_duration[["person_id", "trip_id", "activity_duration"]]
+    #df_trips = pd.merge(df_trips, df_duration, how = "left", on = ["person_id", "trip_id"])
+
+    #print(df_trips.count)
+    #exit()
+
 
     # Clean up
     df_trips = df_trips[[
@@ -156,8 +178,7 @@ def execute(context):
       "departure_time", "arrival_time", "mode", "trip_network_distance", "weekday","crowfly_distance", "activity_duration"
     ]]
 
-    #print(df_trips.columns)
-    #exit()
+    
 
     # Find everything that is consistent
     existing_ids = set(np.unique(df_persons["person_id"])) & set(np.unique(df_trips["person_id"]))
@@ -206,5 +227,9 @@ def execute(context):
     #df_persons = pd.merge(df_persons, df_passenger, on = "person_id", how = "left")
     #df_persons["is_passenger"] = df_persons["is_passenger"].fillna(False)
     #df_persons["is_passenger"] = df_persons["is_passenger"].astype(np.bool)
+
+    #print(df_trips.count)
+    #exit()
+
 
     return df_persons, df_trips
