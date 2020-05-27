@@ -12,10 +12,18 @@ def configure(context, require):
 def execute(context):
     df_activities = context.stage("population.activities")
     df_home, df_work, df_education = context.stage("population.spatial.by_person.primary_locations")
+    
+    print(df_activities.count)
+    exit()
 
+        
+    
     df_home = pd.merge(df_activities[df_activities["purpose"] == "home"][[
         "person_id", "activity_id"
     ]], df_home, how = "inner", on = ["person_id"])#[["person_id", "activity_id", "x", "y"]]
+    
+    
+
     #df_home["location_id"] = np.nan
     assert(len(df_home) == np.count_nonzero(df_activities["purpose"] == "home"))
 
@@ -48,5 +56,8 @@ def execute(context):
     df_locations.loc[f, "y"] = df_locations.loc[f, "home_y"]
 
     df_locations = df_locations[["person_id", "activity_id", "x", "y", "location_id"]]
+
+    print(df_locations.count)
+    exit()
     
     return df_locations
