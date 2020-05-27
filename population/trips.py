@@ -45,6 +45,8 @@ def execute(context):
     # Merge trips to persons
     df_trips = pd.merge(df_persons, df_trips)
 
+    
+
     # Children do not have any trips from the microcensus
     #f = np.isnan(df_trips["hts_person_id"])
     #assert((df_trips[f]["age"] > c.HTS_MINIMUM_AGE).all())
@@ -62,6 +64,7 @@ def execute(context):
     df_trips = df_trips[[
         "person_id", "trip_id", "departure_time", "arrival_time", "mode", "purpose"
     ]]
+    
     
 
     #CHANGED
@@ -83,5 +86,8 @@ def execute(context):
     df_trips["arrival_time"] += offset
     df_trips["departure_time"] = np.round(df_trips["departure_time"])
     df_trips["arrival_time"] = np.round(df_trips["arrival_time"])
+
+    #print(df_trips.count)
+    #exit()
 
     return df_trips
