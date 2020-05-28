@@ -20,7 +20,7 @@ stages:
     #- population.spatial.by_person.primary_locations
     #- population.opportunities
     #- population.spatial.by_person.output
-    #- population.spatial.locations
+    - population.spatial.locations
     #- matsim.facilities
     #- matsim.population
     #- matsim.secondary_locations
