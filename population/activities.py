@@ -27,8 +27,8 @@ def execute(context):
 
     df_activities.loc[:, "start_time"] = df_activities.loc[:, "arrival_time_previous_trip"]
      
-    print(df_activities.count)
-    exit()
+    #print(df_activities.count)
+    #exit()
 
     df_activities.loc[:, "end_time"] = df_activities.loc[:, "departure_time_following_trip"]
     df_activities.loc[:, "purpose"] = df_activities.loc[:, "following_purpose_previous_trip"]
@@ -50,6 +50,14 @@ def execute(context):
     df_activities = pd.concat([df_activities, df_last])
     df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])
 
+    
+    #fill NA on start_time and end_time
+    df_activities['start_time'] = df_activities['start_time'].fillna(df_activities.groupby('person_id')['start_time'].transform('last'))
+    df_activities['end_time'] = df_activities['end_time'].fillna(df_activities.groupby('person_id')['end_time'].transform('first'))
+    
+
+    
+
     # We're still missing activities for people who don't have a any trips
     df_persons = context.stage("population.sociodemographics")[["person_id"]]
 
@@ -69,11 +77,14 @@ def execute(context):
     # Some cleanup
     df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])
     df_activities.loc[:, "duration"] = df_activities.loc[:, "end_time"] - df_activities.loc[:, "start_time"]
+    df_activities.loc[df_activities["duration"] < 0.0, "duration"] += 24.0 * 3600.0
+
 
     df_activities = df_activities[[
         "person_id", "activity_id", "start_time", "end_time", "duration", "purpose", "is_last"
     ]]
     
-    print(df_activities.count)
-    exit()
+    #print(df_activities.count)
+    #exit()
+
     return df_activities
