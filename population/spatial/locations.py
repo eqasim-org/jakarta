@@ -13,8 +13,8 @@ def execute(context):
     df_activities = context.stage("population.activities")
     df_home, df_work, df_education = context.stage("population.spatial.by_person.primary_locations")
     
-    print(df_activities.count)
-    exit()
+    #print(df_activities.count)
+    #exit()
 
         
     
@@ -57,7 +57,7 @@ def execute(context):
 
     df_locations = df_locations[["person_id", "activity_id", "x", "y", "location_id"]]
 
-    print(df_locations.count)
-    exit()
+    #print(df_locations.count)
+    #exit()
     
     return df_locations
