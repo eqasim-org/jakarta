@@ -76,6 +76,7 @@ def execute(context):
 
     # Some cleanup
     df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])
+    df_activities.loc[df_activities["start_time"] > 86400, "start_time"] -= 24.0 * 3600.0
     df_activities.loc[:, "duration"] = df_activities.loc[:, "end_time"] - df_activities.loc[:, "start_time"]
     df_activities.loc[df_activities["duration"] < 0.0, "duration"] += 24.0 * 3600.0
 
