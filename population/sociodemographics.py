@@ -23,8 +23,8 @@ def execute(context):
     df_persons = df_persons[[
         "person_id", "household_id",
         "age", "sex", "binary_student", "binary_employed", #"number_of_vehicles",
-        #"census_person_id", #, "household_size"
-        "zone_id", "binary_car_availability", "binary_mc_availability"
+        "census_person_id", #, "household_size"
+        "zone_id","hhIncome", "binary_car_availability", "binary_mc_availability"
 
     ]]
 
@@ -86,7 +86,7 @@ def execute(context):
     #df_persons.loc[df_persons["number_of_bikes"] == 0, "bike_availability"] = "none"
     #df_persons["bike_availability"] = df_persons["bike_availability"].astype("category")
 
-    #print(df_persons.count)
+    #print (type(df_persons.hhIncome))
     #exit()
 
 
