@@ -36,9 +36,9 @@ def execute(context):
 
     # Attributes
     # I don't need this
-    #df_persons.loc[df_persons["gender"] == 1, "sex"] = "male"
-    #df_persons.loc[df_persons["gender"] == 2, "sex"] = "female"
-    #df_persons["sex"] = df_persons["sex"].astype("category")
+    df_persons.loc[df_persons["sex"] == 1, "sex"] = "male"
+    df_persons.loc[df_persons["sex"] == 2, "sex"] = "female"
+    df_persons["sex"] = df_persons["sex"].astype("category")
 
     # I don't need this
     #df_persons["__employment"] = df_persons["employed"]
@@ -75,7 +75,7 @@ def execute(context):
     "household_income"
      ]]
     
-    #print(df_persons.columns)
+    #print(df_persons.count)
     #exit()
     # Trips
 
