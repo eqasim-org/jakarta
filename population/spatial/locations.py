@@ -13,29 +13,38 @@ def execute(context):
     df_activities = context.stage("population.activities")
     df_home, df_work, df_education = context.stage("population.spatial.by_person.primary_locations")
     
+    #df_activities2 = df_activities[df_activities["purpose"] == "home"]
+
     #print(df_activities.count)
     #exit()
 
-        
+    #print(df_home.count)
+    #exit()    
     
     df_home = pd.merge(df_activities[df_activities["purpose"] == "home"][[
         "person_id", "activity_id"
     ]], df_home, how = "inner", on = ["person_id"])#[["person_id", "activity_id", "x", "y"]]
     
-    
+    #print(df_home.count)
+    #exit()
+
 
     #df_home["location_id"] = np.nan
-    assert(len(df_home) == np.count_nonzero(df_activities["purpose"] == "home"))
+    #assert(len(df_home) == np.count_nonzero(df_activities["purpose"] == "home"))
+
+    #print(df_home.count)
+    #exit()
+
 
     df_work = pd.merge(df_activities[df_activities["purpose"] == "work"][[
         "person_id", "activity_id"
     ]], df_work, how = "inner", on = ["person_id"])
-    assert(len(df_work) == np.count_nonzero(df_activities["purpose"] == "work"))
+    #assert(len(df_work) == np.count_nonzero(df_activities["purpose"] == "work"))
 
     df_education = pd.merge(df_activities[df_activities["purpose"] == "education"][[
         "person_id", "activity_id"
     ]], df_education, how = "inner", on = ["person_id"])
-    assert(len(df_education) == np.count_nonzero(df_activities["purpose"] == "education"))
+    #assert(len(df_education) == np.count_nonzero(df_activities["purpose"] == "education"))
 
     df_locations = pd.concat([df_home, df_work, df_education])
     assert(len(df_locations) == len(df_locations.drop_duplicates(["person_id", "activity_id"])))
