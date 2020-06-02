@@ -26,12 +26,13 @@ class PersonWriter:
         writer.start_attributes()
         writer.add_attribute("age", "java.lang.Integer", str(self.person[2]))
         writer.add_attribute("sex", "java.lang.String", self.person[3][0])
-        writer.add_attribute("employment", "java.lang.String", self.person[4])
-        writer.add_attribute("censusId", "java.lang.Integer", str(self.person[5]))
-        writer.add_attribute("htsId", "java.lang.String", str(self.person[6]))
-        writer.add_attribute("isPassenger", "java.lang.Boolean", writer.true_false(self.person[7]))
+        writer.add_attribute("binary_employed", "java.lang.String", self.person[4])
+        writer.add_attribute("binary_student", "java.lang.String", self.person[5])
+        writer.add_attribute("censusId", "java.lang.Integer", str(self.person[6]))
+        writer.add_attribute("htsId", "java.lang.String", str(self.person[7]))
+        #writer.add_attribute("isPassenger", "java.lang.Boolean", writer.true_false(self.person[7]))
         writer.add_attribute("carAvailability", "java.lang.String", "always" if self.person[8] else "never")
-        writer.add_attribute("income", "java.lang.Double", str(self.person[9]))
+        #writer.add_attribute("income", "java.lang.Double", str(self.person[9]))
         writer.end_attributes()
 
         # Plan
@@ -56,7 +57,7 @@ class PersonWriter:
         writer.end_plan()
         writer.end_person()
 
-PERSON_FIELDS = ["person_id", "age", "sex", "employment", "census_person_id", "hts_person_id", "is_passenger", "binary_car_availability", "income"]
+PERSON_FIELDS = ["person_id", "age", "sex", "binary_employed", "binary_student", "census_person_id", "hts_person_id", "binary_car_availability"] #, "income" , "is_passenger" , "employment", "census_person_id", "sex"
 ACTIVITY_FIELDS = ["person_id", "activity_id", "start_time", "end_time", "duration", "purpose", "is_last", "x", "y", "location_id", "following_mode"] #, "location_id", "following_mode"]
 
 def execute(context):
