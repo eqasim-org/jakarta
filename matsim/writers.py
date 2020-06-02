@@ -193,7 +193,7 @@ class HouseholdsWriter(XmlWriter):
 
     def add_income(self, income):
         self._require_scope(self.HOUSEHOLD_SCOPE)
-        self._write_line('<income currency="CHF" period="month">%f</income>' % income)
+        self._write_line('<income currency="KIDR" period="month">%f</income>' % income)
 
 class FacilitiesWriter(XmlWriter):
     FACILITIES_SCOPE = 0
