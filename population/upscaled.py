@@ -34,5 +34,5 @@ def execute(context):
         df_persons = df_persons[df_persons["person_id"].isin(remaining_person_ids)]
         print("# Downsampled persons: %d" % len(df_persons))
 
-    print(df_persons)
+    #print(df_persons)
     return df_persons
