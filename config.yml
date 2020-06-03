@@ -1,6 +1,8 @@
 raw_data_path: /nas/ilahia/dataset
 target_path: /nas/ilahia/dataset/cache
 output_path: /nas/ilahia/dataset/output
+output_id: greater_jakarta_10pct
+
 input_downsampling: 0.1
 java_memory: 10G
 threads: 4
@@ -23,6 +25,6 @@ stages:
     #- population.spatial.locations
     #- matsim.facilities
     #- matsim.population
-    - matsim.households
-    #- matsim.secondary_locations
+    #- matsim.households
+    - matsim.secondary_locations
     #- matsim.run
