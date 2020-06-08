@@ -86,7 +86,7 @@ def execute(context):
     #df_persons.loc[df_persons["number_of_bikes"] == 0, "bike_availability"] = "none"
     #df_persons["bike_availability"] = df_persons["bike_availability"].astype("category")
 
-    #print (type(df_persons.hhIncome))
+    #print (df_persons.count)
     #exit()
 
 
