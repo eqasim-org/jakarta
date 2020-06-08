@@ -40,9 +40,11 @@ def execute(context):
         "crowfly_distance": "distance"
     })[["mode", "travel_time", "distance", "weight"]]
 
+
+    
     eqla.create_input_distributions(
         df_trips, context.cache_path,
-        modes = ["car", "pt", "bike", "walk", "car_passenger"]
+        modes = ["car", "pt", "bike", "walk", "mc"]
     )
 
     quantiles_path = "%s/quantiles.dat" % context.cache_path
