@@ -85,5 +85,7 @@ def execute(context):
     df_opportunities = pd.concat([df_opportunities, df_centroids], sort = True)
     df_opportunities["location_id"] = np.arange(len(df_opportunities))
 
-     
+    #print(df_opportunities.count)
+    #exit()
+
     return df_opportunities
