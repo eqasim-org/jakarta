@@ -127,7 +127,10 @@ def execute(context):
     df_home = impute_locations(df_households, df_zones, df_home_opportunities, threads, "person_id")[["person_id", "x", "y", "location_id"]]
 
    
-    
+     
+    #print(df_home.isnull().sum())
+    #print()
+
     
 
     #print("Imputing pt zone id ...")
