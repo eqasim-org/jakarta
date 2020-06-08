@@ -65,18 +65,87 @@ def execute(context):
     df_persons = context.stage("population.sociodemographics")
     df_activities = context.stage("population.activities")
 
+    
+    #print(df_persons.count)
+    #exit()
+
+
+   
     # Attach following modes to activities
     df_trips = pd.DataFrame(context.stage("population.trips"), copy = True)[["person_id", "trip_id", "mode"]]
     df_trips.columns = ["person_id", "activity_id", "following_mode"]
+    
+    
+   
     df_activities = pd.merge(df_activities, df_trips, on = ["person_id", "activity_id"], how = "left")
+
+    df_activities['following_mode'] = df_activities['following_mode'].fillna(df_activities.groupby('person_id')['following_mode'].transform('first'))
+    
+    #print(df_activities.count)
+    #exit()
+
 
     # Attach locations to activities
     df_locations = context.stage("population.spatial.locations")
+
+    #f = df_activities["x"].isna()
+
+
+    #print(f.count)
+    #exit()
+
+    #print(df_locations.count)
+    #exit()
+
+
+    
+    #f = df_locations["x"].isna()
+    #print(f.count())
+    #exit()
+
+
+
+    
+
     df_activities = pd.merge(df_activities, df_locations, on = ["person_id", "activity_id"], how = "left")
 
-    # Bring in correct order (although it should already be)
+    #assert(len(df_activities2) == np.count_nonzero(df_activities))
+
+    df_activities = df_activities.dropna()
+
+    #f = df_activities["x"].isna()
+    #print( df_activities2.count)
+    #exit()
+
+
+    
+    
+
+    exclude =  df_persons.person_id.isin(df_activities.person_id)
+    df_persons = df_persons[exclude]
+
+
+    #Bring in correct order (although it should already be)
     df_persons = df_persons.sort_values(by = "person_id")
+
+
     df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])
+
+    
+
+    #print(df_activities['x'].isnull())
+    #exit()
+
+
+    #person_ids = set(np.unique(df_persons["person_id"]))
+    #activities_person_ids = set(np.unique(df_activities["person_id"]))
+    #missing_ativities_ids =  person_ids - activities_person_ids 
+
+    
+    #print(df_activities['person_id'].nunique())
+    #exit()
+
+
 
     df_persons = df_persons[PERSON_FIELDS]
     df_activities = df_activities[ACTIVITY_FIELDS]
