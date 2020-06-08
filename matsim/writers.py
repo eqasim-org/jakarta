@@ -57,7 +57,7 @@ class PopulationWriter(XmlWriter):
         self._require_scope(None)
         self._write_line('<?xml version="1.0" encoding="utf-8"?>')
         self._write_line('<!DOCTYPE population SYSTEM "http://www.matsim.org/files/dtd/population_v6.dtd">')
-        self._write_line('<population desc="Switzerland Baseline">')
+        self._write_line('<population desc="Jakarta Baseline">')
 
         self.scope = self.POPULATION_SCOPE
         self.indent += 1
