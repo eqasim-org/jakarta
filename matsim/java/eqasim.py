@@ -14,7 +14,7 @@ def execute(context):
     ], cwd = context.cache_path)
 
     sp.check_call([
-        "git", "checkout", "develop"
+        "git", "checkout", "jakarta"
     ], cwd = "%s/eqasim-java" % context.cache_path)
 
     sp.check_call([

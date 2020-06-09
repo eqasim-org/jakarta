@@ -24,11 +24,11 @@ class PersonWriter:
 
         # Attributes
         writer.start_attributes()
-        writer.add_attribute("age", "java.lang.Integer", str(self.person[2]))
+        writer.add_attribute("age", "java.lang.Integer", str(int(self.person[2])))
         writer.add_attribute("sex", "java.lang.String", self.person[3][0])
         writer.add_attribute("binary_employed", "java.lang.String", self.person[4])
         writer.add_attribute("binary_student", "java.lang.String", self.person[5])
-        writer.add_attribute("censusId", "java.lang.Integer", str(self.person[6]))
+        writer.add_attribute("censusId", "java.lang.Integer", str(int(self.person[6])))
         writer.add_attribute("htsId", "java.lang.String", str(self.person[7]))
         #writer.add_attribute("isPassenger", "java.lang.Boolean", writer.true_false(self.person[7]))
         writer.add_attribute("carAvailability", "java.lang.String", "always" if self.person[8] else "never")

@@ -40,11 +40,15 @@ def execute(context):
         "crowfly_distance": "distance"
     })[["mode", "travel_time", "distance", "weight"]]
 
-
-    
+	
+    #print(df_trips[df_trips["mode"]=='bike'])
+    #print(df_trips[df_trips["mode"]=='pt'])
+    df_trips = df_trips.astype({'travel_time': 'float64'})
+    df_trips = df_trips.astype({'weight': 'float64'})
+    print(df_trips.dtypes)
     eqla.create_input_distributions(
-        df_trips, context.cache_path,
-        modes = ["car", "pt", "bike", "walk", "mc"]
+        df_trips, context.cache_path, bin_size=50,
+        modes = ["car", "mc", "walk", "pt"]
     )
 
     quantiles_path = "%s/quantiles.dat" % context.cache_path
@@ -53,7 +57,6 @@ def execute(context):
     java = context.stage("utils.java")
     input_population_path = context.stage("matsim.population")
     input_facilities_path = context.stage("matsim.facilities")
-
     output_population_path = "%s/population_with_locations.xml.gz" % context.cache_path
     output_statistics_path = "none" # "%s/statistics.csv" % context.cache_path <- DISABLED!
 

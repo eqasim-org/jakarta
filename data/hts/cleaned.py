@@ -103,7 +103,7 @@ def execute(context):
     df_trips["purpose"] = df_trips["destination_purpose"].astype("category")
 
     df_trips.loc[df_trips["mode"] == 1, "mode"] = "walk"
-    df_trips.loc[df_trips["mode"] == 2, "mode"] = "bike"
+    df_trips.loc[df_trips["mode"] == 2, "mode"] = "walk" #mb chnaged this to walk
     df_trips.loc[df_trips["mode"] == 3, "mode"] = "pt"
     df_trips.loc[df_trips["mode"] == 4, "mode"] = "pt"
     df_trips.loc[df_trips["mode"] == 5, "mode"] = "pt"
