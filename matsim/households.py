@@ -8,6 +8,8 @@ import io
 def configure(context, require):
     require.stage("population.sociodemographics")
     require.stage("population.spatial.by_person.primary_locations")
+    require.stage("population.spatial.locations")
+
 
 FIELDS = ["person_id", "household_id", "hhIncome", "binary_car_availability"]
 
@@ -32,6 +34,13 @@ def execute(context):
     cache_path = context.cache_path
 
     df_persons = context.stage("population.sociodemographics").sort_values(by = ["household_id", "person_id"])
+
+    df_locations = context.stage("population.spatial.locations")
+
+
+    exclude =  df_persons.person_id.isin(df_locations.person_id)
+    df_persons = df_persons[exclude]
+
     #df_home = context.stage("population.spatial.by_person.primary_locations")[0][[
     #    "location_id", #"residence_zone_category"
     #]]

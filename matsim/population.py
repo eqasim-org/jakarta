@@ -129,9 +129,7 @@ def execute(context):
     df_persons = df_persons.sort_values(by = "person_id")
 
 
-    df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])
-
-    
+    df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])    
 
     #print(df_activities['x'].isnull())
     #exit()

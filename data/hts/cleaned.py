@@ -87,6 +87,7 @@ def execute(context):
     #df_trips = df_trips[df_trips['exist1']==True]
 
     
+    ### change trip purpose and mode
 
 
 
@@ -101,6 +102,9 @@ def execute(context):
     df_trips.loc[df_trips["destination_purpose"] == 9, "destination_purpose"] = "leisure"
     df_trips.loc[df_trips["destination_purpose"] == 10, "destination_purpose"] = "other"
     df_trips["purpose"] = df_trips["destination_purpose"].astype("category")
+
+
+
 
     df_trips.loc[df_trips["mode"] == 1, "mode"] = "walk"
     df_trips.loc[df_trips["mode"] == 2, "mode"] = "walk" #mb chnaged this to walk
@@ -117,6 +121,23 @@ def execute(context):
     df_trips.loc[df_trips["mode"] == 13, "mode"] = "car"
 
     df_trips["mode"] = df_trips["mode"].astype("category")
+
+    
+
+    ### delete person that are not start at home
+
+    g = df_trips.groupby('person_id')
+    df = g.head(1)
+    df1 = df[df.destination_purpose == 'home'] 
+    df2 = g.tail(1)
+    df2 = df2[df2.destination_purpose != 'home'] 
+    df3 = pd.concat([df1, df2]).sort_values(by = "person_id")[["person_id"]].drop_duplicates()
+
+    df_trips['exist1'] = df_trips['person_id'].isin(df3['person_id']) 
+    df_trips = df_trips[df_trips['exist1']==False]
+
+    #print(df_trips.count)
+    #exit()
 
     #df_trips["departure_time"] = df_trips["departure_h"] * 3600.0 + df_trips["departure_m"] * 60.0
     #df_trips["arrival_time"] = df_trips["arrival_h"] * 3600.0 + df_trips["arrival_m"] * 60.0
@@ -179,6 +200,12 @@ def execute(context):
     ]]
 
     
+    df_persons['exist1'] = df_persons['person_id'].isin(df3['person_id']) 
+    df_persons = df_persons[df_persons['exist1']==False]
+
+    #print(df_persons.count)
+    #exit()
+
 
     # Find everything that is consistent
     existing_ids = set(np.unique(df_persons["person_id"])) & set(np.unique(df_trips["person_id"]))
