@@ -27,5 +27,6 @@ stages:
     #- matsim.facilities
     #- matsim.population
     #- matsim.households
+    - matsim.java.eqasim
     - matsim.secondary_locations
     #- matsim.run
