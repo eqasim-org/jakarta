@@ -103,7 +103,11 @@ def execute(context):
     #print(f.count())
     #exit()
 
+    exclude =  df_activities.person_id.isin(df_locations.person_id)
+    df_activities = df_activities[exclude]
 
+    #print( df_activities.count)
+    #exit()
 
     
 
@@ -111,10 +115,10 @@ def execute(context):
 
     #assert(len(df_activities2) == np.count_nonzero(df_activities))
 
-    df_activities = df_activities.dropna()
+    #df_activities = df_activities.dropna()
 
     #f = df_activities["x"].isna()
-    #print( df_activities2.count)
+    #print(df_activities.count)
     #exit()
 
 
@@ -131,7 +135,7 @@ def execute(context):
 
     df_activities = df_activities.sort_values(by = ["person_id", "activity_id"])    
 
-    #print(df_activities['x'].isnull())
+    #print(df_activities.count)
     #exit()
 
 

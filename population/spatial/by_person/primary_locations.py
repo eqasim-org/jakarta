@@ -19,7 +19,8 @@ def initialize_parallel(_df_persons, _df_locations):
     global df_persons, df_locations
     df_persons = pd.DataFrame(_df_persons, copy = True)
     
-    
+    #print(df_persons)
+    #exit()
 
    
     df_locations = pd.DataFrame(_df_locations, copy = True) if _df_locations is not None else None

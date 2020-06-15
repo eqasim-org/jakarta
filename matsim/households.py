@@ -35,11 +35,11 @@ def execute(context):
 
     df_persons = context.stage("population.sociodemographics").sort_values(by = ["household_id", "person_id"])
 
-    df_locations = context.stage("population.spatial.locations")
+    #df_locations = context.stage("population.spatial.locations")
 
 
-    exclude =  df_persons.person_id.isin(df_locations.person_id)
-    df_persons = df_persons[exclude]
+    #exclude =  df_persons.person_id.isin(df_locations.person_id)
+    #df_persons = df_persons[exclude]
 
     #df_home = context.stage("population.spatial.by_person.primary_locations")[0][[
     #    "location_id", #"residence_zone_category"

@@ -1,11 +1,11 @@
 raw_data_path: /nas/ilahia/dataset
 target_path: /nas/ilahia/dataset/cache
 output_path: /nas/ilahia/dataset/output
-output_id: greater_jakarta_10pct
+output_id: greater_jakarta_1pct
 
 input_downsampling: 0.01
-java_memory: 10G
-threads: 4
+java_memory: 80G
+threads: 24
 hdm_threads: 4
 stages:
     #- data.census.cleaned
@@ -27,6 +27,7 @@ stages:
     #- matsim.facilities
     #- matsim.population
     #- matsim.households
-    - matsim.java.eqasim
-    - matsim.secondary_locations
-    #- matsim.run
+    #- matsim.java.eqasim
+    #- matsim.secondary_locations
+    #- analysis.distance
+    - matsim.run

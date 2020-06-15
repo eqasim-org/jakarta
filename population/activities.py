@@ -52,8 +52,8 @@ def execute(context):
 
     
     #fill NA on start_time and end_time
-    df_activities['start_time'] = df_activities['start_time'].fillna(df_activities.groupby('person_id')['start_time'].transform('last'))
-    df_activities['end_time'] = df_activities['end_time'].fillna(df_activities.groupby('person_id')['end_time'].transform('first'))
+    #df_activities['start_time'] = df_activities['start_time'].fillna(df_activities.groupby('person_id')['start_time'].transform('last'))
+    #df_activities['end_time'] = df_activities['end_time'].fillna(df_activities.groupby('person_id')['end_time'].transform('first'))
     
 
     

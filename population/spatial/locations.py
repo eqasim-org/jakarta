@@ -12,7 +12,8 @@ def configure(context, require):
 def execute(context):
     df_activities = context.stage("population.activities")
     
-
+    #print(df_activities.count)
+    #exit()
 
     df_home, df_work, df_education = context.stage("population.spatial.by_person.primary_locations")
 
@@ -94,6 +95,10 @@ def execute(context):
     # Set unknown locations to home for the moment
     df_home = context.stage("population.spatial.by_person.primary_locations")[0]
 
+    #print(df_home.count)
+    #exit()
+
+
     df_home["home_x"] = df_home["x"]
     df_home["home_y"] = df_home["y"]
     df_home = df_home[["person_id", "home_x", "home_y"]]
@@ -101,12 +106,22 @@ def execute(context):
     df_locations = pd.merge(df_locations, df_home, on = "person_id")
 
     f = df_locations["location_id"].isna()
+   
+    g = df_locations
+
+    df1 = df_locations[df_locations.location_id == "NaN"] 
+
+    #df2 = df1[["person_id"]].drop_duplicates()
+
+    print(df1.count)
+    exit()
+
     df_locations.loc[f, "x"] = df_locations.loc[f, "home_x"]
     df_locations.loc[f, "y"] = df_locations.loc[f, "home_y"]
 
     df_locations = df_locations[["person_id", "activity_id", "x", "y", "location_id"]]
 
-    df_locations.loc[df_locations['location_id'].isnull(),'location_id'] = df_locations['person_id']
+    #df_locations.loc[df_locations['location_id'].isnull(),'location_id'] = df_locations['person_id']
 
     #print(df_locations.count)
     #exit()
