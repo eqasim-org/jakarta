@@ -39,8 +39,9 @@ def execute(context):
     df_trips = df_trips.rename(columns = {
         "crowfly_distance": "distance"
     })[["mode", "travel_time", "distance", "weight"]]
+    
 
-	
+    	
     #print(df_trips[df_trips["mode"]=='bike'])
     #print(df_trips[df_trips["mode"]=='pt'])
     df_trips = df_trips.astype({'travel_time': 'float64'})
@@ -50,6 +51,9 @@ def execute(context):
         df_trips, context.cache_path, bin_size=50,
         modes = ["car", "mc", "walk", "pt"]
     )
+    
+    #print(df_trips.count)
+    #exit()
 
     quantiles_path = "%s/quantiles.dat" % context.cache_path
     distributions_path = "%s/distributions.dat" % context.cache_path

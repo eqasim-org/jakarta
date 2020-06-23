@@ -6,7 +6,7 @@ def configure(context, require):
     require.stage("population.upscaled")
     require.stage("data.hts.cleaned")
 
-MINIMUM_SOURCE_SAMPLES = 20
+MINIMUM_SOURCE_SAMPLES = 5
 
 def execute(context):
     df_hts = context.stage("data.hts.cleaned")[0]
@@ -30,7 +30,7 @@ def execute(context):
     # age, sex, couple, married, employed, nationality, studies
     # household_size, number_of_vehicles, household_type, household_income_class
 
-    AGE_BOUNDARIES = [15, 18, 24, 45, 65, 80, np.inf]
+    AGE_BOUNDARIES = [15, 18, 24, 45, 65, np.inf]
     df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
     df_source["age_class"] = np.digitize(df_source["age"], AGE_BOUNDARIES, right = True)
 
@@ -83,8 +83,8 @@ def execute(context):
         df_target, "person_id",
         df_source, "person_id",
 	"weight",
-        ["age_class", "sex", "binary_car_availability" ], #, "married"], MARRIED only available for ENTD, not EGT ?
-        ["binary_mc_availability", "binary_employed","binary_student"], #["household_size_class", "zone_au_simple", "income_class_simple", "number_of_vehicles_class"],
+        ["age_class", "sex" ,"binary_student", "binary_employed", "binary_car_availability"], #, "married"], MARRIED only available for ENTD, not EGT ?
+        ["binary_mc_availability", "binary_car_availability"], #["household_size_class", "zone_au_simple", "income_class_simple", "number_of_vehicles_class"],
         runners = number_of_threads,
         minimum_source_samples = MINIMUM_SOURCE_SAMPLES
     )

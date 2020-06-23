@@ -6,7 +6,7 @@ def configure(context, require):
     pass
 
 def execute(context):
-    df_persons = pd.read_csv("%s/HTS/header_persons_final_used2.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_persons = pd.read_csv("%s/HTS/header_persons_final_used3.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
    
     df_codes = pd.read_csv("%s/spatial/codes.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
 
@@ -50,13 +50,21 @@ def execute(context):
     #df_persons["age"] = df_persons["age"].astype(np.int)
     #df_persons["binary_car_availability"] = df_persons["number_of_cars"] > 0
     
-    df_persons["binary_mc_availability"] = df_persons["number_of_motorcycles"] > 0
-    df_persons["binary_car_availability"] = df_persons["number_of_cars"] > 0
+    df_persons["binary_mc_availability"] = df_persons["Access_motorcycles"] == 1
+    df_persons["binary_car_availability"] = df_persons["Access_cars"] == 1
 
     df_persons["binary_employed"] = df_persons["employed"] > 0
     df_persons["binary_student"] = df_persons["student"] > 0
 
+    ##check person
 
+    
+    
+    #b = df_persons[["person_id"]].drop_duplicates()
+
+
+    #print(b.count)
+    #exit()
 
     #df_persons["income"] = df_persons["personal_income"]
 
@@ -79,7 +87,7 @@ def execute(context):
     #exit()
     # Trips
 
-    df_trips = pd.read_csv("%s/HTS/header_trips_Jakarta_3.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_trips = pd.read_csv("%s/HTS/header_trips_Jakarta_4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
 
     ### delete individu which are not living in the zone
 
@@ -100,7 +108,7 @@ def execute(context):
     df_trips.loc[df_trips["destination_purpose"] == 7, "destination_purpose"] = "leisure"
     df_trips.loc[df_trips["destination_purpose"] == 8, "destination_purpose"] = "other"
     df_trips.loc[df_trips["destination_purpose"] == 9, "destination_purpose"] = "leisure"
-    df_trips.loc[df_trips["destination_purpose"] == 10, "destination_purpose"] = "other"
+    df_trips.loc[df_trips["destination_purpose"] == 10, "destination_purpose"] = "leisure"
     df_trips["purpose"] = df_trips["destination_purpose"].astype("category")
 
 
@@ -112,17 +120,21 @@ def execute(context):
     df_trips.loc[df_trips["mode"] == 4, "mode"] = "pt"
     df_trips.loc[df_trips["mode"] == 5, "mode"] = "pt"
     df_trips.loc[df_trips["mode"] == 6, "mode"] = "pt"
-    df_trips.loc[df_trips["mode"] == 7, "mode"] = "mc"
-    df_trips.loc[df_trips["mode"] == 8, "mode"] = "car"
-    df_trips.loc[df_trips["mode"] == 9, "mode"] = "car"
-    df_trips.loc[df_trips["mode"] == 10, "mode"] = "mc"
-    df_trips.loc[df_trips["mode"] == 11, "mode"] = "car"
-    df_trips.loc[df_trips["mode"] == 12, "mode"] = "mc"
-    df_trips.loc[df_trips["mode"] == 13, "mode"] = "car"
+    df_trips.loc[df_trips["mode"] == 7, "mode"] = "car"
+    df_trips.loc[df_trips["mode"] == 8, "mode"] = "mc"
+    df_trips.loc[df_trips["mode"] == 9, "mode"] = "car_odt"
+    df_trips.loc[df_trips["mode"] == 10, "mode"] = "car_odt"
+    df_trips.loc[df_trips["mode"] == 11, "mode"] = "mc_odt"
+    df_trips.loc[df_trips["mode"] == 12, "mode"] = "mc_odt"
+    df_trips.loc[df_trips["mode"] == 13, "mode"] = "car_passenger"
 
     df_trips["mode"] = df_trips["mode"].astype("category")
 
-    
+    #b = df_trips[["person_id"]].drop_duplicates()
+    #print(b.count)
+    #exit()
+
+
 
     ### delete person that are not start at home
 
@@ -136,6 +148,11 @@ def execute(context):
     df_trips['exist1'] = df_trips['person_id'].isin(df3['person_id']) 
     df_trips = df_trips[df_trips['exist1']==False]
 
+
+   
+   
+ 
+
     #print(df_trips.count)
     #exit()
 
@@ -146,6 +163,19 @@ def execute(context):
     df_trips["crowfly_distance"] = np.sqrt(
         (df_trips["origin_coord_x2"] - df_trips["destination_coord_x2"])**2 + (df_trips["origin_coord_y2"] - df_trips["destination_coord_y2"])**2
     )
+
+    
+    df4 =  df_trips[df_trips.crowfly_distance == 0] 
+    df5 = df4.sort_values(by = "person_id")[["person_id"]].drop_duplicates()
+
+
+    df_trips['exist1'] = df_trips['person_id'].isin(df5['person_id']) 
+    df_trips = df_trips[df_trips['exist1']==False]
+
+
+    #print(df_trips)
+    #exit()
+
 
     # Adjust trip id
     df_trips = df_trips.sort_values(by = ["person_id", "trip_id"])
@@ -202,6 +232,10 @@ def execute(context):
     
     df_persons['exist1'] = df_persons['person_id'].isin(df3['person_id']) 
     df_persons = df_persons[df_persons['exist1']==False]
+
+    df_persons['exist1'] = df_persons['person_id'].isin(df5['person_id']) 
+    df_persons = df_persons[df_persons['exist1']==False]
+
 
     #print(df_persons.count)
     #exit()

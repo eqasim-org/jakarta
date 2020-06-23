@@ -107,14 +107,14 @@ def execute(context):
 
     f = df_locations["location_id"].isna()
    
-    g = df_locations
+    #g = df_locations
 
-    df1 = df_locations[df_locations.location_id == "NaN"] 
+    #df1 = df_locations[df_locations.location_id == "NaN"] 
 
     #df2 = df1[["person_id"]].drop_duplicates()
 
-    print(df1.count)
-    exit()
+    #print(df1.count)
+    #exit()
 
     df_locations.loc[f, "x"] = df_locations.loc[f, "home_x"]
     df_locations.loc[f, "y"] = df_locations.loc[f, "home_y"]
