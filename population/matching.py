@@ -6,7 +6,7 @@ def configure(context, require):
     require.stage("population.upscaled")
     require.stage("data.hts.cleaned")
 
-MINIMUM_SOURCE_SAMPLES = 5
+MINIMUM_SOURCE_SAMPLES = 10
 
 def execute(context):
     df_hts = context.stage("data.hts.cleaned")[0]
@@ -15,6 +15,9 @@ def execute(context):
 
     # Source: HTS
     df_source = df_hts
+    
+    #print(df_source.count)
+    #exit()
 
     # Target: Census
     df_census = context.stage("population.upscaled").sort_values(by = "person_id")
@@ -83,8 +86,8 @@ def execute(context):
         df_target, "person_id",
         df_source, "person_id",
 	"weight",
-        ["age_class", "sex" ,"binary_student", "binary_employed", "binary_car_availability"], #, "married"], MARRIED only available for ENTD, not EGT ?
-        ["binary_mc_availability", "binary_car_availability"], #["household_size_class", "zone_au_simple", "income_class_simple", "number_of_vehicles_class"],
+        ["age_class", "sex"], #, "married"], MARRIED only available for ENTD, not EGT ?
+        [ "employment", "binary_car_availability", "binary_mc_availability"], #["household_size_class", "zone_au_simple", "income_class_simple", "number_of_vehicles_class"],
         runners = number_of_threads,
         minimum_source_samples = MINIMUM_SOURCE_SAMPLES
     )

@@ -48,8 +48,11 @@ def execute(context):
     df_trips = df_trips.astype({'weight': 'float64'})
     print(df_trips.dtypes)
     eqla.create_input_distributions(
-        df_trips, context.cache_path, bin_size=50,
-        modes = ["car", "mc", "walk", "pt"]
+        df_trips, context.cache_path, bin_size=20, #it was 50
+        modes = ["car","motorcycle", "walk", "pt","car_passenger", "carodt", "mcodt"],
+        #resampling_factors = {
+        #    "car": 0.9, "walk": 0.0, "pt": 0.2, "motorcycle" : 0.7, "car_passenger" : 0.3, "carodt" : 0.3, "mcodt" : 0.3
+        #}
     )
     
     #print(df_trips.count)

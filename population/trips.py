@@ -77,7 +77,7 @@ def execute(context):
     counts = df_trips[["person_id", "trip_id"]].groupby("person_id").size().reset_index(name = "count")["count"].values
 
     interval = df_trips[["person_id", "departure_time"]].groupby("person_id").min().reset_index()["departure_time"].values
-    interval = np.minimum(1800.0, interval) # If first departure time is just 5min after midnight, we only add a deviation of 5min
+    interval = np.minimum(3600.0, interval) # If first departure time is just 5min after midnight, we only add a deviation of 5min
 
     offset = np.random.random(size = (len(counts), )) * interval * 2.0 - interval
     offset = np.repeat(offset, counts)

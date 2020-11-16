@@ -27,7 +27,7 @@ class JavaRunner:
             return sp.check_call(command_line, cwd = cwd)
 
 def configure(context, require):
-    require.config("java_memory", "10G")
+    require.config("java_memory", "300G")
     require.config("java_binary", "java")
 
     # Not ideal, because we assume that "java" is the right binary.

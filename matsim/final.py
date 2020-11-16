@@ -27,13 +27,14 @@ def execute(context):
     os.mkdir(target_path)
 
     for file in [
-        "sao_paulo_network.xml.gz",
-        "sao_paulo_transit_schedule.xml.gz",
-        #"sao_paulo_transit_vehicles.xml.gz",
-        "sao_paulo_facilities.xml.gz",
-        #"sao_paulo_households.xml.gz",
-        "sao_paulo_population.xml.gz",
-        "sao_paulo_config.xml"
+        "jakarta_network.xml.gz",
+        "transit_schedule_cleaned.xml.gz",
+        "transit_vehicles.xml.gz",
+        "facilities.xml.gz",
+	"mode-vehicles.xml",
+        "jakarta_households.xml.gz",
+        "jakarta_population.xml.gz",
+        "jakarta_config.xml"
     ]:
         shutil.copyfile("%s/%s" % (results_path, file), "%s/%s" % (target_path, file))
 

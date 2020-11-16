@@ -19,16 +19,19 @@ def execute(context):
     df_hts = pd.DataFrame(context.stage("data.hts.cleaned")[0], copy = True)
     df_hts["hts_person_id"] = df_hts["person_id"]
     del df_hts["person_id"]
+    
 
+    
     df_persons = df_persons[[
         "person_id", "household_id",
         "age", "sex", "binary_student", "binary_employed", #"number_of_vehicles",
         "census_person_id", #, "household_size"
-        "zone_id","hhIncome", "binary_car_availability", "binary_mc_availability"
+        "zone_id","hhIncome", "binary_car_availability", "binary_mc_availability", "employment"
 
     ]]
 
-
+    #print(df_persons.count)
+    #exit()
 
     #df_hts = df_hts[[
         #"hts_person_id", #"has_license", "has_pt_subscription",
@@ -39,11 +42,13 @@ def execute(context):
 
     df_hts = df_hts[[
         "hts_person_id", #"has_license", "has_pt_subscription",
-        #"number_of_bikes", #"is_passenger"
+        "is_passenger",
         "commute_mode", "commute_distance",
         "has_work_trip", "has_education_trip"
     ]]
 
+    #print (df_hts.count)
+    #exit()
 
 
     #print(df_matching.count)
@@ -86,8 +91,7 @@ def execute(context):
     #df_persons.loc[df_persons["number_of_bikes"] == 0, "bike_availability"] = "none"
     #df_persons["bike_availability"] = df_persons["bike_availability"].astype("category")
 
-    #print (df_persons.count)
-    #exit()
+   
 
 
     
