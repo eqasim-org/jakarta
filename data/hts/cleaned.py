@@ -6,7 +6,7 @@ def configure(context, require):
     pass
 
 def execute(context):
-    df_persons = pd.read_csv("%s/HTS/header_persons_final_used3.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_persons = pd.read_csv("%s/HTS/df_persons_25072020.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
    
     df_codes = pd.read_csv("%s/spatial/codes.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
 
@@ -42,19 +42,32 @@ def execute(context):
 
     # I don't need this
     #df_persons["__employment"] = df_persons["employed"]
-    #df_persons.loc[df_persons["__employment"] == 1, "employment"] = "yes"
-    #df_persons.loc[df_persons["__employment"] == 2, "employment"] = "no"
-    #df_persons.loc[df_persons["__employment"] == 3, "employment"] = "student"
+    df_persons.loc[df_persons["employed"] == 1, "employment"] = "yes"
+    df_persons.loc[df_persons["employed"] == 0, "employment"] = "no"
+    df_persons.loc[df_persons["student"] == 1, "employment"] = "student"
+    df_persons.loc[df_persons["age"] < 18, "employment"] = "student"
+    df_persons.loc[df_persons["age"] < 6, "employment"] = "no"
+
+
+   
+
+
     #df_persons["employment"] = df_persons["employment"].astype("category")
 
     #df_persons["age"] = df_persons["age"].astype(np.int)
     #df_persons["binary_car_availability"] = df_persons["number_of_cars"] > 0
     
     df_persons["binary_mc_availability"] = df_persons["Access_motorcycles"] == 1
-    df_persons["binary_car_availability"] = df_persons["Access_cars"] == 1
+    df_persons["binary_htscar_availability"] = df_persons["Access_cars"] == 1
+
+    df_persons["binary_car_availability"] = (df_persons["binary_htscar_availability"] == 1) | (df_persons["binary_mc_availability"] == 1)
+
 
     df_persons["binary_employed"] = df_persons["employed"] > 0
     df_persons["binary_student"] = df_persons["student"] > 0
+
+    #print(df_persons.count)
+    #exit()
 
     ##check person
 
@@ -80,14 +93,14 @@ def execute(context):
     "household_id", "person_id", "weight",
     "home_zone", "age", "sex",
     "binary_mc_availability", "binary_car_availability", "binary_employed","binary_student",
-    "household_income"
+    "household_income", "employment"
      ]]
     
     #print(df_persons.count)
     #exit()
     # Trips
 
-    df_trips = pd.read_csv("%s/HTS/header_trips_Jakarta_4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_trips = pd.read_csv("%s/HTS/df_trips_25072020.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
 
     ### delete individu which are not living in the zone
 
@@ -121,12 +134,13 @@ def execute(context):
     df_trips.loc[df_trips["mode"] == 5, "mode"] = "pt"
     df_trips.loc[df_trips["mode"] == 6, "mode"] = "pt"
     df_trips.loc[df_trips["mode"] == 7, "mode"] = "car"
-    df_trips.loc[df_trips["mode"] == 8, "mode"] = "mc"
-    df_trips.loc[df_trips["mode"] == 9, "mode"] = "car_odt"
-    df_trips.loc[df_trips["mode"] == 10, "mode"] = "car_odt"
-    df_trips.loc[df_trips["mode"] == 11, "mode"] = "mc_odt"
-    df_trips.loc[df_trips["mode"] == 12, "mode"] = "mc_odt"
-    df_trips.loc[df_trips["mode"] == 13, "mode"] = "car_passenger"
+    df_trips.loc[df_trips["mode"] == 8, "mode"] = "motorcycle"
+    df_trips.loc[df_trips["mode"] == 9, "mode"] = "carodt" #car_odt
+    df_trips.loc[df_trips["mode"] == 10, "mode"] = "carodt"  #car_odt
+    df_trips.loc[df_trips["mode"] == 11, "mode"] = "mcodt" #mc_odt
+    df_trips.loc[df_trips["mode"] == 12, "mode"] = "mcodt" #mc_odt
+    df_trips.loc[df_trips["mode"] == 13, "mode"] = "car_passenger" #car_passenger
+
 
     df_trips["mode"] = df_trips["mode"].astype("category")
 
@@ -163,6 +177,7 @@ def execute(context):
     df_trips["crowfly_distance"] = np.sqrt(
         (df_trips["origin_coord_x2"] - df_trips["destination_coord_x2"])**2 + (df_trips["origin_coord_y2"] - df_trips["destination_coord_y2"])**2
     )
+
 
     
     df4 =  df_trips[df_trips.crowfly_distance == 0] 
@@ -201,7 +216,7 @@ def execute(context):
     df_trips.groupby('person_id')['departure_time'].transform(lambda s: s[::-1]))
 
 
-    #print(df_trips.columns)
+    #print(df_trips.count)
     #exit()
 
 
@@ -233,13 +248,19 @@ def execute(context):
     df_persons['exist1'] = df_persons['person_id'].isin(df3['person_id']) 
     df_persons = df_persons[df_persons['exist1']==False]
 
+   
+
+
     df_persons['exist1'] = df_persons['person_id'].isin(df5['person_id']) 
     df_persons = df_persons[df_persons['exist1']==False]
-
-
+    
     #print(df_persons.count)
     #exit()
 
+    #print(df_persons.count)
+    #exit()
+    #print(df_persons.groupby('employment').count())
+    #exit()
 
     # Find everything that is consistent
     existing_ids = set(np.unique(df_persons["person_id"])) & set(np.unique(df_trips["person_id"]))
@@ -280,16 +301,16 @@ def execute(context):
 
     # Passengers
 
-    #df_passenger = pd.DataFrame(df_trips[["person_id", "mode"]], copy = True)
-    #df_passenger = df_passenger[df_passenger["mode"] == "car_passenger"][["person_id"]]
-    #df_passenger = df_passenger.drop_duplicates()
-    #df_passenger["is_passenger"] = True
+    df_passenger = pd.DataFrame(df_trips[["person_id", "mode"]], copy = True)
+    df_passenger = df_passenger[df_passenger["mode"] == "car_passenger"][["person_id"]]
+    df_passenger = df_passenger.drop_duplicates()
+    df_passenger["is_passenger"] = True
 
-    #df_persons = pd.merge(df_persons, df_passenger, on = "person_id", how = "left")
-    #df_persons["is_passenger"] = df_persons["is_passenger"].fillna(False)
-    #df_persons["is_passenger"] = df_persons["is_passenger"].astype(np.bool)
+    df_persons = pd.merge(df_persons, df_passenger, on = "person_id", how = "left")
+    df_persons["is_passenger"] = df_persons["is_passenger"].fillna(False)
+    df_persons["is_passenger"] = df_persons["is_passenger"].astype(np.bool)
 
-    #print(df_trips.count)
+    #print(df_persons.count)
     #exit()
 
 

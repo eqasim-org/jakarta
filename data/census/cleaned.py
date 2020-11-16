@@ -6,7 +6,7 @@ def configure(context, require):
     pass
 
 def execute(context):
-    df = pd.read_csv("%s/census/census_full.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
+    df = pd.read_csv("%s/census/census_full2.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
 
     #don't need it yet
     #del df["hasSalary"]
@@ -46,21 +46,27 @@ def execute(context):
     df.loc[df["sex"] == 2, "sex"] = "female"
     df["sex"] = df["sex"].astype("category")
 
-    #df["__employment"] = df["employment"]
-    #df.loc[df["__employment"] == 1, "employment"] = "yes"
-    #df.loc[df["__employment"] == 2, "employment"] = "no"
-    #df.loc[df["__employment"] == 3, "employment"] = "student"
-    #df["employment"] = df["employment"].astype("category")
+    df.loc[df["employed"] == 1, "employment"] = "yes"
+    df.loc[df["employed"] == 0, "employment"] = "no"
+    df.loc[df["student"] == 1, "employment"] = "student"
+    df.loc[df["age"] < 18, "employment"] = "student"
+    df.loc[df["age"] < 6, "employment"] = "no"
+
 
     #df["age"] = df["age"].astype(np.int)
     #df["binary_car_availability"] = df["carAvailability"] == 1
     #df["income"] = np.round(df["householdIncome"] / df["numberOfMembers"])
     #df["income"] = df["totalIncome"]
     df["binary_mc_availability"] = df["mcAvailable"] > 0
-    df["binary_car_availability"] = df["vehicleAvailable"] > 0
+    df["binary_vehicleAvailable"] = df["vehicleAvailable"] > 0
+    
+    df["binary_car_availability"] = (df["binary_vehicleAvailable"] == 1) | (df["binary_mc_availability"] == 1)
+
     df["binary_employed"] = df["employed"] > 0
     df["binary_student"] = df["student"] > 0
-
+    
+    #print(df.groupby('employment').count())
+    #exit()
 
     # Clean up
     #df = df[[
@@ -68,24 +74,24 @@ def execute(context):
      #   "zone_id", "age", "sex", "employment", "binary_car_availability"
     #]]
 
-    df.loc[df["hhIncome"] == 0.0, "hhIncome"] = 500.0
-    df.loc[df["hhIncome"] == 99.0, "hhIncome"] = 500.0    
+    #df.loc[df["hhIncome"] == 0.0, "hhIncome"] = 500.0
+    #df.loc[df["hhIncome"] == 99.0, "hhIncome"] = 500.0    
     df.loc[df["hhIncome"] == 1.0, "hhIncome"] = 500.0
-    df.loc[df["hhIncome"] == 2.0, "hhIncome"] = 1300.0
-    df.loc[df["hhIncome"] == 3.0, "hhIncome"] = 1800.0
-    df.loc[df["hhIncome"] == 4.0, "hhIncome"] = 2500.0
-    df.loc[df["hhIncome"] == 5.0, "hhIncome"] = 3500.0
-    df.loc[df["hhIncome"] == 6.0, "hhIncome"] = 4500.0
-    df.loc[df["hhIncome"] == 7.0, "hhIncome"] = 5500.0
-    df.loc[df["hhIncome"] == 8.0, "hhIncome"] = 7000.0
-    df.loc[df["hhIncome"] == 9.0, "hhIncome"] = 9000.0
-    df.loc[df["hhIncome"] == 10.0, "hhIncome"] = 11500.0
-    df.loc[df["hhIncome"] == 11.0, "hhIncome"] = 13500.0
-    df.loc[df["hhIncome"] == 12.0, "hhIncome"] = 16500.0
-    df.loc[df["hhIncome"] == 13.0, "hhIncome"] = 18500.0
-    df.loc[df["hhIncome"] == 14.0, "hhIncome"] = 21500.0
-    df.loc[df["hhIncome"] == 15.0, "hhIncome"] = 23500.0
-    df.loc[df["hhIncome"] == 16.0, "hhIncome"] = 30000.0 
+    df.loc[df["hhIncome"] == 2.0, "hhIncome"] = 2000.0
+    df.loc[df["hhIncome"] == 3.0, "hhIncome"] = 4000.0
+    df.loc[df["hhIncome"] == 4.0, "hhIncome"] = 6500.0
+    df.loc[df["hhIncome"] == 5.0, "hhIncome"] = 10000.0
+    df.loc[df["hhIncome"] == 6.0, "hhIncome"] = 13500.0
+    df.loc[df["hhIncome"] == 7.0, "hhIncome"] = 16500.0
+    df.loc[df["hhIncome"] == 8.0, "hhIncome"] = 19500.0
+    df.loc[df["hhIncome"] == 9.0, "hhIncome"] = 22000.0
+    df.loc[df["hhIncome"] == 10.0, "hhIncome"] = 24000.0
+    df.loc[df["hhIncome"] == 11.0, "hhIncome"] = 30000.0
+    #df.loc[df["hhIncome"] == 12.0, "hhIncome"] = 16500.0
+    #df.loc[df["hhIncome"] == 13.0, "hhIncome"] = 18500.0
+    #df.loc[df["hhIncome"] == 14.0, "hhIncome"] = 21500.0
+    #df.loc[df["hhIncome"] == 15.0, "hhIncome"] = 23500.0
+    #df.loc[df["hhIncome"] == 16.0, "hhIncome"] = 30000.0 
   
 
 
@@ -95,7 +101,7 @@ def execute(context):
     df = df[[
         "person_id", "geo", "household_id","census_person_id",
         "age", "sex", "socialStatus", "hhIncome","binary_employed", "binary_student", "binary_mc_availability",
-        "binary_car_availability"
+        "binary_car_availability", "employment"
     ]]
 
 
@@ -103,6 +109,9 @@ def execute(context):
 
     #print(df.hhIncome.count)
     #exit()
+    #print(df.groupby('employment').count())
+    #exit()
+
 
     
 
