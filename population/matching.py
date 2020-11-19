@@ -6,7 +6,7 @@ def configure(context, require):
     require.stage("population.upscaled")
     require.stage("data.hts.cleaned")
 
-MINIMUM_SOURCE_SAMPLES = 10
+MINIMUM_SOURCE_SAMPLES =  5
 
 def execute(context):
     df_hts = context.stage("data.hts.cleaned")[0]
@@ -86,8 +86,8 @@ def execute(context):
         df_target, "person_id",
         df_source, "person_id",
 	"weight",
-        ["age_class", "sex"], #, "married"], MARRIED only available for ENTD, not EGT ?
-        [ "employment", "binary_car_availability", "binary_mc_availability"], #["household_size_class", "zone_au_simple", "income_class_simple", "number_of_vehicles_class"],
+        ["age_class", "sex", "employment"], #, "married"], MARRIED only available for ENTD, not EGT ?
+        ["binary_car_availability", "binary_mc_availability"], #["household_size_class", "zone_au_simple", "income_class_simple", "number_of_vehicles_class"],
         runners = number_of_threads,
         minimum_source_samples = MINIMUM_SOURCE_SAMPLES
     )
@@ -106,6 +106,8 @@ def execute(context):
     #    unmatchable_person_selector
     #][["person_id", "age", "age_class", "sex", "married"]])
     #exit()
+    
+      
 
     #print(df_target[unmatchable_person_selector])
     #exit()
@@ -138,10 +140,13 @@ def execute(context):
     #    )
     #]["age"] < c.HTS_MINIMUM_AGE))
 
+    df_matching.to_csv('matching.csv')
+
     print("Matching is done. In total, the following observations were removed from the census because they cannot be matched: ")
     #print("  Households: %d (%.2f%%)" % ( len(removed_household_ids), 100.0 * len(removed_household_ids) / number_of_census_households ))
     print("  Persons: %d (%.2f%%)" % ( len(removed_person_ids), 100.0 * len(removed_person_ids) / number_of_census_persons ))
-
+    
+    #df_matching.to_csv('unmatched.csv') 
 
     # Return
     return df_matching, removed_person_ids

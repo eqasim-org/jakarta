@@ -6,7 +6,7 @@ def configure(context, require):
     pass
 
 def execute(context):
-    df_persons = pd.read_csv("%s/HTS/df_persons_25072020.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_persons = pd.read_csv("%s/HTS/df_persons_25072020ver4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
    
     df_codes = pd.read_csv("%s/spatial/codes.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
 
@@ -42,11 +42,38 @@ def execute(context):
 
     # I don't need this
     #df_persons["__employment"] = df_persons["employed"]
-    df_persons.loc[df_persons["employed"] == 1, "employment"] = "yes"
-    df_persons.loc[df_persons["employed"] == 0, "employment"] = "no"
-    df_persons.loc[df_persons["student"] == 1, "employment"] = "student"
-    df_persons.loc[df_persons["age"] < 18, "employment"] = "student"
-    df_persons.loc[df_persons["age"] < 6, "employment"] = "no"
+    #df_persons.loc[df_persons["employed"] == 1, "employment"] = "yes"
+    #df_persons.loc[df_persons["employed"] == 0, "employment"] = "no"
+    
+    #df_persons.loc[(df_persons["age"] < 18) & (df_persons["age"] > 6), "student"] = 1
+    #df_persons.loc[(df_persons["age"] < 6) | (df_persons["age"] > 60), "employment"] = "no"
+    #df_persons.loc[df_persons["student"] == 1, "employment"] = "student"
+    #df_persons.loc[df_persons["age"] < 18, "employment"] = "student"
+    #df_persons.loc[df_persons["age"] < 18, "employment"] = "student"
+    #df_persons["employment"] = df_persons["employment"].astype("category")
+
+
+    #Employment
+    df_persons.loc[df_persons["S_OC"] == 1, "employment"] = "yes"
+    df_persons.loc[df_persons["S_OC"] == 2, "employment"] = "no"
+    df_persons.loc[df_persons["S_OC"] == 3, "employment"] = "no"
+    df_persons.loc[df_persons["S_OC"] == 4, "employment"] = "student"
+    df_persons.loc[df_persons["S_OC"] == 5, "employment"] = "no"
+    df_persons["employment"] = df_persons["employment"].astype("category")
+
+    
+
+
+
+     
+    #print(df_persons)
+    #exit()
+
+
+    #df_persons.loc[df_persons["age"] < 6, "employment"] = "no"
+    #df["employment"] = df["employment"].astype("category")
+    #df_persons["employment"] = (df_persons["age"] < 18 ) | (df_persons["binary_mc_availability"] > 6)
+
 
 
    
@@ -93,14 +120,14 @@ def execute(context):
     "household_id", "person_id", "weight",
     "home_zone", "age", "sex",
     "binary_mc_availability", "binary_car_availability", "binary_employed","binary_student",
-    "household_income", "employment"
+    "household_income", "employment", "employed", "S_OC"
      ]]
     
     #print(df_persons.count)
     #exit()
     # Trips
 
-    df_trips = pd.read_csv("%s/HTS/df_trips_25072020.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_trips = pd.read_csv("%s/HTS/df_trips_25072020ver4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
 
     ### delete individu which are not living in the zone
 

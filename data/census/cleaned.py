@@ -46,13 +46,31 @@ def execute(context):
     df.loc[df["sex"] == 2, "sex"] = "female"
     df["sex"] = df["sex"].astype("category")
 
-    df.loc[df["employed"] == 1, "employment"] = "yes"
-    df.loc[df["employed"] == 0, "employment"] = "no"
-    df.loc[df["student"] == 1, "employment"] = "student"
-    df.loc[df["age"] < 18, "employment"] = "student"
-    df.loc[df["age"] < 6, "employment"] = "no"
+    #Employment
+    df.loc[df["socialStatus"] == "employed", "employment"] = "yes"
+    df.loc[df["socialStatus"] == "student", "employment"] = "student"
+    df.loc[df["socialStatus"] == "other", "employment"] = "no"
+    df.loc[df["socialStatus"] == "housewife", "employment"] = "no"
+    df.loc[df["socialStatus"] == "unemployed", "employment"] = "no"
+    df.loc[df["socialStatus"] == "retired", "employment"] = "no"
+    df["employment"] = df["employment"].astype("category")
+    
 
 
+
+
+
+
+    #df.loc[df["employed"] == 1, "employment"] = "yes"
+    #df.loc[df["employed"] == 0, "employment"] = "no"
+    #df.loc[(df["age"] < 18) & (df["age"] > 6), "student"] = 1
+    #df.loc[df["student"] == 1, "employment"] = "student"
+    #df.loc[(df["age"] < 6) | (df["age"] > 60), "employment"] = "no"
+    #df.loc[df["age"] < 6, "employment"] = "no"
+    #df["employment"] = df["employment"].astype("category")
+    #df.loc[df["age"] < 6, "employment"] = "no"
+
+    
     #df["age"] = df["age"].astype(np.int)
     #df["binary_car_availability"] = df["carAvailability"] == 1
     #df["income"] = np.round(df["householdIncome"] / df["numberOfMembers"])
@@ -101,7 +119,7 @@ def execute(context):
     df = df[[
         "person_id", "geo", "household_id","census_person_id",
         "age", "sex", "socialStatus", "hhIncome","binary_employed", "binary_student", "binary_mc_availability",
-        "binary_car_availability", "employment"
+        "binary_car_availability", "employment", "employed"
     ]]
 
 
