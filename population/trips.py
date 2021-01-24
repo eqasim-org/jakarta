@@ -12,12 +12,16 @@ def execute(context):
     df_persons = context.stage("population.sociodemographics")[[
         "person_id", "hts_person_id", "age"
     ]]
+    
+  
 
     df_trips = pd.DataFrame(context.stage("data.hts.cleaned")[1], copy = True)
     #df_trips = df_trips[df_trips["weekday"]]
     df_trips = df_trips[[
         "person_id", "trip_id", "departure_time", "arrival_time", "mode", "purpose"
     ]]
+    
+   
 
     assert(len(df_trips) == len(df_trips.dropna()))
 
@@ -42,19 +46,33 @@ def execute(context):
 
     df_trips.columns = ["hts_person_id", "trip_id", "departure_time", "arrival_time", "mode", "purpose"]
 
+    #print(df_trips.count)
+    #exit()
+
+    #print(df_persons.count)
+    #exit()
+
+    
     # Merge trips to persons
     df_trips = pd.merge(df_persons, df_trips)
+
+    df_trips.to_csv('trips_check.csv') 
 
     
 
     # Children do not have any trips from the microcensus
     #f = np.isnan(df_trips["hts_person_id"])
     #assert((df_trips[f]["age"] > c.HTS_MINIMUM_AGE).all())
+    
+    
+
 
     # We deliberately delete them here, since other persons also may not have any
     # trips (though they may have activities).
     #df_trips = df_trips[~f]
     
+    #print(df_trips.count)
+    #exit()
 
     #CHANGED
     df_trips.loc[df_trips["arrival_time"] < df_trips["departure_time"], "arrival_time"] += 24.0 * 3600.0

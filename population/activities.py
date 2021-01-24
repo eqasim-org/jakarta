@@ -23,7 +23,8 @@ def execute(context):
         suffixes = ["_following_trip", "_previous_trip"], how = "left"
     )
 
-    
+    #print(df_activities.count)
+    #exit()
 
     df_activities.loc[:, "start_time"] = df_activities.loc[:, "arrival_time_previous_trip"]
      
@@ -61,15 +62,25 @@ def execute(context):
     # We're still missing activities for people who don't have a any trips
     df_persons = context.stage("population.sociodemographics")[["person_id"]]
 
+    
+
     missing_ids = set(np.unique(df_persons["person_id"])) - set(np.unique(df_activities["person_id"]))
     print("Found %d persons without activities" % len(missing_ids))
+
+    
 
     df_missing = pd.DataFrame.from_records([
         (person_id, 1, "home", True) for person_id in missing_ids
     ], columns = ["person_id", "activity_id", "purpose", "is_last"])
 
+    
+
+
     # Impute household id in the missing ones
     df_missing = pd.merge(df_missing, df_persons[["person_id"]])
+
+    #print(df_missing.count)
+    #exit()
 
     df_activities = pd.concat([df_activities, df_missing], sort = True)
     assert(len(np.unique(df_persons["person_id"])) == len(np.unique(df_activities["person_id"])))

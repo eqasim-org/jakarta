@@ -3,7 +3,7 @@ target_path: /nas/ilahia/dataset/cache
 output_path: /nas/ilahia/dataset/output
 output_id: greater_jakarta_1pct
 
-input_downsampling: 0.01
+input_downsampling: 0.1
 java_memory: 300G
 threads: 48
 hdm_threads: 4
@@ -21,14 +21,14 @@ stages:
     #- population.opportunities
     #- population.spatial.by_person.primary_zones
     #- population.spatial.by_person.primary_locations
-    - population.spatial.by_person.output
-    #- population.spatial.locations
-    #- matsim.facilities
-    #- matsim.population
-    #- matsim.households
+    #- population.spatial.by_person.output
+    - population.spatial.locations
+    - matsim.facilities
+    - matsim.population
+    - matsim.households
     #- matsim.java.eqasim
-    #- matsim.secondary_locations
+    - matsim.secondary_locations
     #- analysis.distance
     #- utils.java
-    #- matsim.run
+    - matsim.run
    

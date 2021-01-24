@@ -6,7 +6,9 @@ def configure(context, require):
     pass
 
 def execute(context):
-    df_persons = pd.read_csv("%s/HTS/df_persons_25072020ver4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    #df_persons = pd.read_csv("%s/HTS/df_persons_25072020ver4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_persons = pd.read_csv("%s/HTS/df_persons_050121.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+
    
     df_codes = pd.read_csv("%s/spatial/codes.csv" % context.config["raw_data_path"], sep = ",", encoding= 'unicode_escape')
 
@@ -15,8 +17,7 @@ def execute(context):
     #df_persons['exist1'] = df_persons['home_zone'].isin(df_codes['id_zone'])
     #df_persons = df_persons[df_persons['exist1']==True]
 
-    #print(df_persons.count)
-    #exit()
+   
 
 #I don't need this
     #for column in ["weight_trip", "number_of_bikes", "number_of_motorcycles", "weekday"]:
@@ -127,7 +128,9 @@ def execute(context):
     #exit()
     # Trips
 
-    df_trips = pd.read_csv("%s/HTS/df_trips_25072020ver4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    #df_trips = pd.read_csv("%s/HTS/df_trips_25072020ver4.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+    df_trips = pd.read_csv("%s/HTS/df_trips_050121.csv" % context.config["raw_data_path"], sep = ",",  encoding= 'unicode_escape')
+
 
     ### delete individu which are not living in the zone
 
@@ -281,8 +284,7 @@ def execute(context):
     df_persons['exist1'] = df_persons['person_id'].isin(df5['person_id']) 
     df_persons = df_persons[df_persons['exist1']==False]
     
-    #print(df_persons.count)
-    #exit()
+    
 
     #print(df_persons.count)
     #exit()
@@ -290,10 +292,13 @@ def execute(context):
     #exit()
 
     # Find everything that is consistent
-    existing_ids = set(np.unique(df_persons["person_id"])) & set(np.unique(df_trips["person_id"]))
-    df_persons = df_persons[df_persons["person_id"].isin(existing_ids)]
-    df_trips = df_trips[df_trips["person_id"].isin(existing_ids)]
+    #existing_ids = set(np.unique(df_persons["person_id"])) & set(np.unique(df_trips["person_id"]))
+    #df_persons = df_persons[df_persons["person_id"].isin(existing_ids)]
+    #df_trips = df_trips[df_trips["person_id"].isin(existing_ids)]
 
+
+    #print(df_trips.count)
+    #exit()
     #### From here everything as Paris
 
     # Contains car
@@ -339,6 +344,7 @@ def execute(context):
 
     #print(df_persons.count)
     #exit()
-
+    #print(df_trips.count)
+    #exit()
 
     return df_persons, df_trips
